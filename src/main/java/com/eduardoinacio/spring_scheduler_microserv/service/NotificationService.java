@@ -1,6 +1,7 @@
 package com.eduardoinacio.spring_scheduler_microserv.service;
 
 import com.eduardoinacio.spring_scheduler_microserv.controller.dto.ScheduleNotificationDTO;
+import com.eduardoinacio.spring_scheduler_microserv.entity.Enum.StatusValues;
 import com.eduardoinacio.spring_scheduler_microserv.entity.Notification;
 import com.eduardoinacio.spring_scheduler_microserv.repository.NotificationRepository;
 import org.springframework.http.HttpStatus;
@@ -27,5 +28,15 @@ public class NotificationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification not found, searched id:" + notificationId);
         }
         return notification.get();
+    }
+
+    public void cancelNotification(Long notificationId){
+        Optional<Notification> notification = notificationRepository.findById(notificationId);
+        if(notification.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification not found, searched id:" + notificationId);
+        }
+
+        notification.get().setStatus(StatusValues.CANCELED.toStatus());
+        notificationRepository.save(notification.get());
     }
 }
