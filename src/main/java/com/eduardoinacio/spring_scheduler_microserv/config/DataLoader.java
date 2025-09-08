@@ -5,9 +5,11 @@ import com.eduardoinacio.spring_scheduler_microserv.entity.Enum.StatusValues;
 import com.eduardoinacio.spring_scheduler_microserv.repository.ChannelRepository;
 import com.eduardoinacio.spring_scheduler_microserv.repository.StatusRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
+@Configuration
 public class DataLoader implements CommandLineRunner {
     private ChannelRepository channelRepository;
     private StatusRepository statusRepository;
