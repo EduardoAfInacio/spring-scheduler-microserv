@@ -9,3 +9,17 @@ services:
       MYSQL_DATABASE: scheduler
     ports:
       - "3306:3306"
+    networks:
+      - scheduler-network
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - scheduler-network
+
+networks:
+  scheduler-network:
+    driver: bridge
