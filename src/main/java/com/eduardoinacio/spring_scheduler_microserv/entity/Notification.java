@@ -28,4 +28,12 @@ public class Notification {
     @ManyToOne
     @JoinColumn(name = "status_id")
     private Status status;
+
+    public Notification(LocalDateTime sendDate, String message, String destination, Channel channel, Status status) {
+        this.sendDate = sendDate;
+        this.message = message;
+        this.destination = destination;
+        this.channel = channel;
+        this.status = status;
+    }
 }
