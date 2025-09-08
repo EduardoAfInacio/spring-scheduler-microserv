@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 public record ScheduleNotificationDTO(@NotNull(message = "Datetime cannot be null")
-                                      @Size(min = 3, max = 255, message = "Datetime must be between 3 and 255 characters")
                                       LocalDateTime dateTime,
                                       @NotNull(message = "Destination cannot be null")
                                       @Size(min = 3, max = 255, message = "Destination must be between 3 and 255 characters")
