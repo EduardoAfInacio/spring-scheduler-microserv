@@ -28,7 +28,7 @@ public class NotificationController {
         return ResponseEntity.ok(notification);
     }
 
-    @PatchMapping("/{notificationId}")
+    @PatchMapping("/{notificationId}/cancel")
     public ResponseEntity<Void> cancelNotification(@PathVariable("notificationId") Long notificationId){
         notificationService.cancelNotification(notificationId);
         return ResponseEntity.noContent().build();
