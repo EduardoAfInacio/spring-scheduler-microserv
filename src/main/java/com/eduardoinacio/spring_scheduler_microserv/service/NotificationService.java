@@ -4,18 +4,21 @@ import com.eduardoinacio.spring_scheduler_microserv.controller.dto.ScheduleNotif
 import com.eduardoinacio.spring_scheduler_microserv.entity.Enum.StatusValues;
 import com.eduardoinacio.spring_scheduler_microserv.entity.Notification;
 import com.eduardoinacio.spring_scheduler_microserv.repository.NotificationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @Service
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
     public NotificationService(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
@@ -49,17 +52,20 @@ public class NotificationService {
                 dateTime
         );
 
-        listOfNotifications.forEach(
-                sendNotification()
-        );
+        listOfNotifications.forEach(this::sendNotification);
     }
 
-    public Consumer<Notification> sendNotification(){
-        return notification -> {
-            // ENVIAR
-
+    @Async("notificationExecutor")
+    public void sendNotification(Notification notification){
+        try{
+            logger.info(Thread.currentThread().getName() + "- Sending notification to: " + notification.getDestination());
+            Thread.sleep(1000);
             notification.setStatus(StatusValues.SUCCESS.toStatus());
             notificationRepository.save(notification);
-        };
+            logger.info(Thread.currentThread().getName() + "- Notification sent successfully");
+        }catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+            System.out.println("Thread interrupted: " + e.getMessage());
+        }
     }
 }
