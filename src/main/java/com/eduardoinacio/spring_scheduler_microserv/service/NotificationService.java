@@ -18,10 +18,12 @@ import java.util.Optional;
 @Service
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, EmailService emailService) {
         this.notificationRepository = notificationRepository;
+        this.emailService = emailService;
     }
 
     public void scheduleNotification(ScheduleNotificationDTO dto) {
@@ -59,13 +61,14 @@ public class NotificationService {
     public void sendNotification(Notification notification){
         try{
             logger.info(Thread.currentThread().getName() + "- Sending notification to: " + notification.getDestination());
-            Thread.sleep(1000);
+            emailService.sendEmail(notification.getDestination(), "Scheduler", notification.getMessage());
             notification.setStatus(StatusValues.SUCCESS.toStatus());
             notificationRepository.save(notification);
             logger.info(Thread.currentThread().getName() + "- Notification sent successfully");
-        }catch (InterruptedException e){
-            Thread.currentThread().interrupt();
-            System.out.println("Thread interrupted: " + e.getMessage());
+        }catch (Exception e){
+            logger.error(Thread.currentThread().getName() + "- Error sending notification: " + e.getMessage());
+            notification.setStatus(StatusValues.ERROR.toStatus());
+            notificationRepository.save(notification);
         }
     }
 }
