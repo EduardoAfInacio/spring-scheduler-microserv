@@ -8,7 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 public class NotificationService {
@@ -38,5 +41,25 @@ public class NotificationService {
 
         notification.get().setStatus(StatusValues.CANCELED.toStatus());
         notificationRepository.save(notification.get());
+    }
+
+    public void checkAndSendNotifications(LocalDateTime dateTime){
+        var listOfNotifications = notificationRepository.findByStatusInAndSendDateBefore(
+                List.of(StatusValues.PENDING.toStatus(), StatusValues.ERROR.toStatus()),
+                dateTime
+        );
+
+        listOfNotifications.forEach(
+                sendNotification()
+        );
+    }
+
+    public Consumer<Notification> sendNotification(){
+        return notification -> {
+            // ENVIAR
+
+            notification.setStatus(StatusValues.SUCCESS.toStatus());
+            notificationRepository.save(notification);
+        };
     }
 }
