@@ -110,4 +110,3 @@ The main controller is `NotificationController` based on `@RequestMapping("/api/
 - PATCH /api/v1/notifications/{notificationId}/cancel
 
   - Description: Cancels a scheduled notification (changes status to canceled).
-    ## Development Notes
